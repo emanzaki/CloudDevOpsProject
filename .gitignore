@@ -3,3 +3,4 @@ Terraform/terraform.tfstate
 Terraform/terraform.tfstate.backup
 Terraform/.terraform.lock.hcl
 **/ivolve-key.pem
+Terraform/ivolve_ip.txt
