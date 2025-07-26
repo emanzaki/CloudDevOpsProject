@@ -12,7 +12,7 @@ resource "aws_key_pair" "jenkins" {
 
 resource "local_file" "jenkins_private_key" {
   content = tls_private_key.jenkins.private_key_pem
-  filename = "${path.module}/${var.mytag}-key.pem"
+  filename = "${path.root}/../server-info/${var.mytag}-key.pem"
   file_permission = "0400"  
 }
 
@@ -27,6 +27,7 @@ resource "aws_security_group" "ivolve-sg" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port = 0
     to_port = 0

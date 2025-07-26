@@ -21,6 +21,6 @@ module "server" {
 
 resource "local_file" "ivolve_server_ip" {
   content = module.server.ivolve_server_ip
-  filename = "${path.module}/ivolve_ip.txt"
+  filename = "${path.root}/../server-info/ivolve_ip.txt"
   
 }
