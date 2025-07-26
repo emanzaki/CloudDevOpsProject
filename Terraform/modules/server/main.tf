@@ -6,7 +6,7 @@ resource "tls_private_key" "jenkins" {
 
 resource "aws_key_pair" "jenkins" {
   key_name = "${var.mytag}-key"
-  public_key =  tls_private_key.jenkins.private_key_openssh
+  public_key =  trimspace(tls_private_key.jenkins.public_key_openssh)
 
 }
 
