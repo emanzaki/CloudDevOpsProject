@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./Todo-List-nodejs .
 
-RUN npm install -f
+RUN npm install 
 
 EXPOSE 4000
 
