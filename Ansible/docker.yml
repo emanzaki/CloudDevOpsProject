@@ -1,0 +1,51 @@
+---
+- name: Install Docker on Amazon Linux
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Update all packages
+      package:
+        name: '*'
+        state: latest
+        update_cache: yes
+
+    - name: Install required packages
+      package:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+
+    - name: Add Docker repository
+      command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      when: ansible_distribution_major_version == "2"
+
+    - name: Install Docker
+      package:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+      when: ansible_distribution_major_version == "2"
+
+    - name: Install Docker for Amazon Linux 2023
+      package:
+        name: docker
+        state: present
+      when: ansible_distribution_major_version == "2023"
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes

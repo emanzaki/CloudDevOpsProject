@@ -13,7 +13,7 @@ variable "ami" {
 variable "instance_type" {
   description = "Type of instance to create"
   type        = string
-  default = "t2.micro"
+  default = "t2.medium"
 }
 
 variable "fort-tag" {
