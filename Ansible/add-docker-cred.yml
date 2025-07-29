@@ -1,31 +1,11 @@
-- name: Create Docker registry Secret (k8s pull secret)
-  hosts: all
-  become: true
-  gather_facts: no
-  vars_files:
-    - vars/docker_vars.yml 
-  kubernetes.core.k8s:
-    api_version: v1
-    kind: Secret
-    namespace: my-app-namespace
-    name: my-docker-secret
-    definition:
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: my-docker-secret
-        namespace: my-app-namespace
-      type: kubernetes.io/dockerconfigjson
-      stringData:
-        .dockerconfigjson: |
-          {
-            "auths": {
-              "{{ docker_registry_url }}": {
-                "username": "{{ docker_username }}",
-                "password": "{{ docker_password }}",
-                "email": "{{ docker_email }}",
-                "auth": "{{ (docker_username + ':' + docker_password) | b64encode }}"
-              }
-            }
-          }
-    state: present
+
+- name: Create Namespace for Docker registry secret
+  command: minikubekubectl create namespace docker-registry-secret || true
+- name: Create Docker secret for Kubernetes
+  command:
+    cmd: >
+      minikube kubectl create secret docker-registry docker-registry-secret
+      --docker-server={{ docker_registry_url }}
+      --docker-username={{ docker_username }}
+      --docker-password={{ docker_password }}
+      --docker-email={{ docker_email }}

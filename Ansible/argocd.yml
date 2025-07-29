@@ -1,36 +1,32 @@
----
-- name: Install ArgoCD Application
-  hosts: all
-  become: true
-  tasks:
-    - name: Install ArgoCD Application for my-app
-      command:
-        "{{ item }}"
-      loop:
-        - minikube kubectl create namespace argocd
-        - minikube kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    - name: Check if ArgoCD is ready
-      command: minikube kubectl wait --for=condition=Ready pod/argocd-server --timeout=180s -n argocd
-      register: argocd_ready
 
-    - name: Show ArgoCD Application status
-      debug:
-        msg: "{{ argocd_ready.stdout }}"
+- name: Install ArgoCD Application for my-app
+  command:
+    "{{ item }}"
+  loop:
+    - minikube kubectl create namespace argocd
+    - minikube kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+- name: Check if ArgoCD is ready
+  command: minikube kubectl wait --for=condition=Ready pod/argocd-server --timeout=180s -n argocd
+  register: argocd_ready
 
-    - name: Port Forward ArgoCD Server
-      command: minikube kubectl port-forward svc/argocd-server -n argocd 8080:443
+- name: Show ArgoCD Application status
+  debug:
+    msg: "{{ argocd_ready.stdout }}"
 
-    - name: Copy Content to ArgoCD
-      ansible.builtin.copy:
-        dest: ~/argocd/
-        src: ../k8s/*
-    
-    - name: Get Docker Private Image
-      
-    - name: Create ArgoCD Application
-      command: minikube kubectl apply -f ~/argocd/application.yml
+- name: Port Forward ArgoCD Server
+  command: minikube kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+- name: Copy Content to ArgoCD
+  ansible.builtin.copy:
+    dest: ~/argocd/
+    src: ../k8s/*
+
+- name: Get Docker Private Image
+  
+- name: Create ArgoCD Application
+  command: minikube kubectl apply -f ~/argocd/application.yml
 
 
-    
+
 
 

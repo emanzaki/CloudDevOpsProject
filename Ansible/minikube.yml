@@ -1,30 +1,23 @@
----
-- name: Install Minikube on Amazon Linux 2023
-  hosts: all
-  become: yes
-  gather_facts: yes
 
-  tasks:
+- name: Install required dependencies
+  package:
+    name: conntrack
+    state: present
 
-    - name: Install required dependencies
-      package:
-        name: conntrack
-        state: present
+- name: Download Minikube binary
+  get_url:
+    url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    dest: /usr/local/bin/minikube
+    mode: '0755'
+    owner: root
+    group: root
 
-    - name: Download Minikube binary
-      get_url:
-        url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-        dest: /usr/local/bin/minikube
-        mode: '0755'
-        owner: root
-        group: root
-
-    - name: Start Minikube with Docker driver
-      command: minikube start --driver=docker
-      environment:
-        CHANGE_MINIKUBE_NONE_USER: "true"
-      become_user: ec2-user
-      register: minikube_start
-      changed_when: "'Done!' in minikube_start.stdout or minikube_start.rc == 0"
-      ignore_errors: yes
+- name: Start Minikube with Docker driver
+  command: minikube start --driver=docker
+  environment:
+    CHANGE_MINIKUBE_NONE_USER: "true"
+  become_user: ec2-user
+  register: minikube_start
+  changed_when: "'Done!' in minikube_start.stdout or minikube_start.rc == 0"
+  ignore_errors: yes
 

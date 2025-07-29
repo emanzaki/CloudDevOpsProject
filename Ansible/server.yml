@@ -1,0 +1,15 @@
+---
+- name: Setup Ec2 instance
+  hosts: all
+  become: true
+  vars_files:
+  - ./vars/docker_vars.yml
+  tasks:
+    - name: SetUp Docker
+      include_tasks: docker.yml
+    - name: SetUp Minikube
+      include_tasks: minikube.yml
+    - name: Add Docker credentials
+      include_tasks: add-docker-cred.yml
+    - name: SetUp ArgoCD
+      include_tasks: argocd.yml
