@@ -1,11 +1,14 @@
 
-- name: Create Namespace for Docker registry secret
-  command: minikubekubectl create namespace docker-registry-secret || true
+- name: Create Namespace for Application
+  command: minikube kubectl -- create namespace my-app-namespace
+  become: no
 - name: Create Docker secret for Kubernetes
+  become: no
   command:
     cmd: >
-      minikube kubectl create secret docker-registry docker-registry-secret
+      minikube kubectl create -- secret docker-registry docker-registry-secret
       --docker-server={{ docker_registry_url }}
       --docker-username={{ docker_username }}
       --docker-password={{ docker_password }}
       --docker-email={{ docker_email }}
+      -n my-app-namespace
