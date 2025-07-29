@@ -10,6 +10,7 @@
   when: namespace_check.rc != 0
 
 - name: Check if ArgoCD is already installed
+  become: no
   command: minikube kubectl -- get deployment argocd-server -n argocd
   register: argocd_check
   ignore_errors: true
@@ -19,7 +20,7 @@
   command: minikube kubectl -- apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 - name: Check if ArgoCD is ready
-  command: minikube kubectl wait --for=condition=Ready pod/argocd-server --timeout=180s -n argocd
+  command: minikube kubectl -- wait --for=condition=Ready pod/argocd-server --timeout=180s -n argocd
   register: argocd_ready
 
 - name: Show ArgoCD Application status
