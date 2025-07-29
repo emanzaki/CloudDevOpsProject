@@ -1,11 +1,23 @@
+- name: Check if argocd Namespace exists
+  become: no
+  command: minikube kubectl -- get namespace argocd
+  register: namespace_check
+  ignore_errors: true
+
+- name: Create Namespace for ArgoCD
+  command: minikube kubectl -- create namespace argocd
+  become: no
+  when: namespace_check.rc != 0
+
+- name: Check if ArgoCD is already installed
+  command: minikube kubectl -- get deployment argocd-server -n argocd
+  register: argocd_check
+  ignore_errors: true
 
 - name: Install ArgoCD Application for my-app
   become: no
-  command:
-    "{{ item }}"
-  loop:
-    - minikube kubectl -- create namespace argocd
-    - minikube kubectl -- apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  command: minikube kubectl -- apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
 - name: Check if ArgoCD is ready
   command: minikube kubectl wait --for=condition=Ready pod/argocd-server --timeout=180s -n argocd
   register: argocd_ready

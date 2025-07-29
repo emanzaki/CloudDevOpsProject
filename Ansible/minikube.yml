@@ -19,6 +19,7 @@
   when: minikube_version is failed
 
 - name: Check minikube status
+  become: no
   command: minikube status -o json
   register: minikube_status
   ignore_errors: yes
