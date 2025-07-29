@@ -20,6 +20,7 @@
   command: minikube kubectl -- apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 - name: Check if ArgoCD is ready
+  become: no
   command: minikube kubectl -- wait --for=condition=Ready pod/argocd-server --timeout=180s -n argocd
   register: argocd_ready
 
