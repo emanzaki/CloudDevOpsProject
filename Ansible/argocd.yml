@@ -19,44 +19,6 @@
   become: no
   command: minikube kubectl -- apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-- name: Check if ArgoCD pod exists
-  become: no
-  command: minikube kubectl -- get pod argocd-server -n argocd -o json
-  register: argocd_pod_check
-  ignore_errors: yes
-  changed_when: false
-
-- name: Wait for ArgoCD server to be ready
-  become: no
-  command: minikube kubectl -- wait --for=condition=Ready pod/argocd-server --timeout=300s -n argocd
-  register: argocd_ready
-  retries: 3
-  delay: 30
-  until: argocd_ready.rc == 0
-  when: argocd_pod_check.rc == 0
-  ignore_errors: yes
-
-- name: Fail if ArgoCD pod not found
-  fail:
-    msg: "ArgoCD server pod not found in namespace 'argocd'"
-  when: argocd_pod_check.rc != 0
-
-- name: Show ArgoCD Application status
-  debug:
-    msg: "{{ argocd_ready.stdout }}"
-
-- name: Port Forward ArgoCD Server
-  become: no
-  command: minikube kubectl -- port-forward svc/argocd-server -n argocd 8080:443
-
-- name: Copy Content to ArgoCD
-  ansible.builtin.copy:
-    dest: ~/argocd/
-    src: ../k8s/*
-  
-- name: Create ArgoCD Application
-  become: no
-  command: minikube kubectl -- apply -f ~/argocd/application.yml
 
 
 

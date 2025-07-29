@@ -1,0 +1,18 @@
+---
+- name: Deploy ArgoCD on Minikube
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Port Forward ArgoCD Server
+      become: no
+      command: minikube kubectl -- port-forward svc/argocd-server -n argocd 8080:443
+
+    - name: Copy Content to ArgoCD
+      ansible.builtin.copy:
+        dest: ~/argocd/
+        src: ../k8s/*
+      
+    - name: Create ArgoCD Application
+      become: no
+      command: minikube kubectl -- apply -f ~/argocd/application.yml
