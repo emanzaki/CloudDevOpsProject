@@ -5,7 +5,7 @@
 - name: Create Docker secret for Kubernetes
   become: no
   vars_files:
-    - ./vars/docker_vars.yml
+    - ./vars/docker_creds.
   command:
     cmd: >
       minikube kubectl create -- secret docker-registry docker-registry-secret

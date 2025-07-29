@@ -21,8 +21,6 @@
     dest: ~/argocd/
     src: ../k8s/*
 
-- name: Get Docker Private Image
-  
 - name: Create ArgoCD Application
   command: minikube kubectl apply -f ~/argocd/application.yml
 
