@@ -3,3 +3,6 @@ Terraform/**/terraform.tfstate.backup
 Terraform/**/.terraform
 Terraform/**/.terraform.lock.hcl
 Terraform/**/terraform.tfstate.lock.hcl
+
+Ansible/vars/docker_creds.yml
+server-info/
