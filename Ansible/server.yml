@@ -2,6 +2,8 @@
 - name: Setup Ec2 instance
   hosts: all
   become: true
+  vars_files:
+    - ./vars/docker_creds.yml
   tasks:
     - name: SetUp Docker
       include_tasks: docker.yml

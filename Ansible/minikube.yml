@@ -1,18 +1,35 @@
-
 - name: Install required dependencies
   package:
     name: conntrack
     state: present
+  changed_when: false
 
-- name: Download Minikube binary
+- name: Check if Minikube is already installed
+  command: minikube version
+  register: minikube_version
+  ignore_errors: yes
+
+- name: Download Minikube binary if not installed
   get_url:
     url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
     dest: /usr/local/bin/minikube
     mode: '0755'
     owner: root
     group: root
+  when: minikube_version is failed
 
-- name: Start Minikube with Docker driver
+- name: Check minikube status
+  command: minikube status -o json
+  register: minikube_status
+  ignore_errors: yes
+  changed_when: false
+
+- name: Parse minikube status
+  set_fact:
+    minikube_running: "{{ (minikube_status.stdout | from_json).Host == 'Running' and (minikube_status.stdout | from_json).Kubelet == 'Running' and (minikube_status.stdout | from_json).APIServer == 'Running' }}"
+  when: minikube_status.rc == 0
+
+- name: Start Minikube with Docker driver if not running
   command: minikube start --driver=docker
   environment:
     CHANGE_MINIKUBE_NONE_USER: "true"
@@ -20,4 +37,5 @@
   register: minikube_start
   changed_when: "'Done!' in minikube_start.stdout or minikube_start.rc == 0"
   ignore_errors: yes
-
+  when: 
+    - minikube_status.rc != 0 or not minikube_running | default(false)
