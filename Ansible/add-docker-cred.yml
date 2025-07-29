@@ -1,11 +1,22 @@
+- name: Check if Namespace exists
+  become: no
+  command: minikube kubectl -- get namespace my-app-namespace
+  register: namespace_check
+  ignore_errors: true
 
 - name: Create Namespace for Application
   command: minikube kubectl -- create namespace my-app-namespace
   become: no
+  when: namespace_check.rc != 0
+
+- name: Check if Docker secret exists
+  become: no
+  command: minikube kubectl -- get secret docker-registry-secret -n my-app-namespace
+  register: docker_secret_check
+  ignore_errors: true
+
 - name: Create Docker secret for Kubernetes
   become: no
-  vars_files:
-    - ./vars/docker_creds.
   command:
     cmd: >
       minikube kubectl create -- secret docker-registry docker-registry-secret
@@ -14,3 +25,5 @@
       --docker-password={{ docker_password }}
       --docker-email={{ docker_email }}
       -n my-app-namespace
+  when: docker_secret_check.rc != 0
+
