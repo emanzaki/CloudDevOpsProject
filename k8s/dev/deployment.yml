@@ -17,6 +17,6 @@ spec:
       containers:
       - name: my-app
         image: emanzaki/fortstak:latest
-        
+        imagePullSecret: docker-registry-secret
         ports:
         - containerPort: 4000

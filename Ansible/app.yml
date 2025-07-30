@@ -12,7 +12,7 @@
     - name: Copy Content to ArgoCD
       ansible.builtin.copy:
         dest: "/home/ec2-user/argocd/"
-        src: files/
+        src: ../k8s/
 
     - name: Verify application.yml exists
       ansible.builtin.stat:
