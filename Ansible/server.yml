@@ -6,10 +6,10 @@
     - ./vars/docker_creds.yml
   tasks:
     - name: SetUp Docker
-      include_tasks: docker.yml
+      include_tasks: tasks/docker.yml
     - name: SetUp Minikube
-      include_tasks: minikube.yml
+      include_tasks: tasks/minikube.yml
     - name: Add Docker credentials
-      include_tasks: add-docker-cred.yml
+      include_tasks: tasks/add-docker-cred.yml
     - name: SetUp ArgoCD
-      include_tasks: argocd.yml
+      include_tasks: tasks/argocd.yml
