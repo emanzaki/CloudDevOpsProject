@@ -4,15 +4,22 @@
   become: true
   tasks:
 
-    - name: Port Forward ArgoCD Server
-      become: no
-      command: minikube kubectl -- port-forward svc/argocd-server -n argocd 8080:443
+    - name: Ensure ArgoCD directory exists
+      ansible.builtin.file:
+        path: "/home/ec2-user/argocd"
+        state: directory
 
     - name: Copy Content to ArgoCD
       ansible.builtin.copy:
-        dest: ~/argocd/
-        src: ../k8s/*
-      
+        dest: "/home/ec2-user/argocd/"
+        src: files/
+
+    - name: Verify application.yml exists
+      ansible.builtin.stat:
+        path: "/home/ec2-user/argocd/application.yml"
+      register: app_file
+
     - name: Create ArgoCD Application
       become: no
-      command: minikube kubectl -- apply -f ~/argocd/application.yml
+      command: minikube kubectl -- apply -f /home/ec2-user/argocd/application.yml
+      when: app_file.stat.exists

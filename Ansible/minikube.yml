@@ -7,7 +7,6 @@
 - name: Check if Minikube is already installed
   command: minikube version
   register: minikube_version
-  ignore_errors: yes
 
 - name: Download Minikube binary if not installed
   get_url:
@@ -16,27 +15,20 @@
     mode: '0755'
     owner: root
     group: root
-  when: minikube_version is failed
+  when: minikube_version.rc != 0
 
-- name: Check minikube status
-  become: no
-  command: minikube status -o json
+- name: Check if Minikube is running
+  command: minikube status
   register: minikube_status
   ignore_errors: yes
   changed_when: false
-
-- name: Parse minikube status
-  set_fact:
-    minikube_running: "{{ (minikube_status.stdout | from_json).Host == 'Running' and (minikube_status.stdout | from_json).Kubelet == 'Running' and (minikube_status.stdout | from_json).APIServer == 'Running' }}"
-  when: minikube_status.rc == 0
 
 - name: Start Minikube with Docker driver if not running
   command: minikube start --driver=docker
   environment:
     CHANGE_MINIKUBE_NONE_USER: "true"
-  become_user: ec2-user
+  become: no
   register: minikube_start
-  changed_when: "'Done!' in minikube_start.stdout or minikube_start.rc == 0"
   ignore_errors: yes
-  when: 
-    - minikube_status.rc != 0 or not minikube_running | default(false)
+  when: minikube_status.rc != 0
+
