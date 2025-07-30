@@ -2,7 +2,9 @@
 - name: Deploy ArgoCD on Minikube
   hosts: all
   become: true
-  include_tasks: tasks/apache.yml
+  include_tasks: 
+      - name: Include Apache reverse proxy setup
+        include_tasks: tasks/apache.yml
   tasks:
     - name: Start MongoDB container if it doesn't exist
       command: docker run -d -p 27017:27017 -v mongodb:/data/db --name mongodb mongo:noble
