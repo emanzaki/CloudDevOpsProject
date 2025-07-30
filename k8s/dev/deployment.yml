@@ -1,9 +1,8 @@
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-app
+  namespace: my-app-namespace
 spec:
   replicas: 2
   selector:
@@ -15,9 +14,9 @@ spec:
         app: my-app
     spec:
       containers:
-      - name: my-app
-        image: emanzaki/fortstak:latest
-        imagePullSecrets:
+        - name: my-app
+          image: emanzaki/fortstak:latest
+          ports:
+            - containerPort: 4000
+      imagePullSecrets:
         - name: docker-registry-secret
-        ports:
-        - containerPort: 4000
