@@ -3,13 +3,19 @@
   hosts: all
   become: true
   tasks:
-    - name: Database as container
+    - name: Check if MongoDB container exists
+      shell: docker ps -a --format '{{.Names}}' | grep -w mongodb || true
+      register: container_exists
+
+    - name: Start MongoDB container if it doesn't exist
       command: docker run -d -p 27017:27017 -v mongodb:/data/db --name mongodb mongo:noble
+      when: container_exists.stdout == ""
     
     - name: Check if MongoDB container is running
       shell: docker inspect -f '{{.State.Running}}' mongodb
       register: container_status
-      retries: 5
+      ignore_errors: true
+      retries: 10
       delay: 3
       until: container_status.stdout == "true"
 
