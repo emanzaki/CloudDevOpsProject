@@ -1,0 +1,28 @@
+---
+- name: Set Up Apache as Reverse Proxy to App on Port 30080
+  hosts: all
+  became: true
+  tasks:
+    - name: Install Apache
+      command: sudo yum update -y && sudo yum install -y httpd
+    - name: Config for Reverse Proxy
+      copy:
+        dest: /etc/httpd/conf/httpd.conf
+        content: |
+          <VirtualHost *:80>
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/html
+
+            ProxyPreserveHost On
+            ProxyPass / http://localhost:30080/
+            ProxyPassReverse / http://localhost:30080/
+
+            ErrorLog /var/log/httpd/error.log
+            CustomLog /var/log/httpd/access.log combined
+          </VirtualHost>
+
+    - name: Enable Apache
+      command: sudo systemctl enable httpd 
+    
+    - name: Start Apache
+      command: sudo systemctl restart httpd
