@@ -3,15 +3,6 @@
   hosts: all
   become: true   
   tasks:
-    - name: Include Apache reverse proxy setup
-      include_tasks: tasks/apache.yml
-      
-    - name: Start MongoDB container if it doesn't exist
-      command: docker run -d -p 27017:27017 -v mongodb:/data/db --name mongodb mongo:noble
-
-    - name: Create DB
-      command: docker exec mongodb sh -c 'mongosh --eval "use todolistDb"'
-
     - name: Ensure ArgoCD directory exists
       ansible.builtin.file:
         path: "/home/ec2-user/argocd"
@@ -31,3 +22,6 @@
       become: no
       command: minikube kubectl -- apply -f /home/ec2-user/argocd/application.yml
       when: app_file.stat.exists
+
+    - name: Include Apache reverse proxy setup
+      include_tasks: tasks/apache.yml

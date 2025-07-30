@@ -1,40 +1,27 @@
----
-- name: Set Up Apache as Reverse Proxy to App on Port 30080
-  hosts: all
-  become: true
-  tasks:
-    - name: Install Apache
-      yum:
-        name: httpd
-        state: present
-        update_cache: true
 
-    - name: Configure Reverse Proxy
-      copy:
-        dest: /etc/httpd/conf.d/reverse-proxy.conf
-        content: |
-          <VirtualHost *:80>
-            ServerAdmin webmaster@localhost
+- name: Install Apache
+  yum:
+    name: httpd
+    state: present
+    update_cache: true
 
-            ProxyPreserveHost On
-            ProxyPass / http://localhost:30080/
-            ProxyPassReverse / http://localhost:30080/
+- name: Configure Reverse Proxy
+  copy:
+    dest: /etc/httpd/conf.d/reverse-proxy.conf
+    content: |
+      <VirtualHost *:80>
+        ServerAdmin webmaster@localhost
 
-            ErrorLog /var/log/httpd/error.log
-            CustomLog /var/log/httpd/access.log combined
-          </VirtualHost>
+        ProxyPreserveHost On
+        ProxyPass / http://localhost:30080/
+        ProxyPassReverse / http://localhost:30080/
 
-    - name: Ensure firewalld is not blocking HTTP (optional, only if using firewalld)
-      firewalld:
-        service: http
-        permanent: true
-        state: enabled
-        immediate: true
-      when: ansible_facts['distribution'] == "Amazon" or ansible_facts['distribution'] == "CentOS"
-      ignore_errors: true
+        ErrorLog /var/log/httpd/error.log
+        CustomLog /var/log/httpd/access.log combined
+      </VirtualHost>
 
-    - name: Enable and start Apache
-      service:
-        name: httpd
-        state: restarted
-        enabled: true
+- name: Enable and start Apache
+  service:
+    name: httpd
+    state: restarted
+    enabled: true
