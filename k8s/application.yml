@@ -4,10 +4,11 @@ metadata:
   name: my-app-argo
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: emanzaki/fortstak
-    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
-    argocd-image-updater.argoproj.io/emanzaki.fortstak.pull-secret: pullsecret:argocd/docker-registry-secret
-    argocd-image-updater.argoproj.io/git-branch: main
+  argocd-image-updater.argoproj.io/image-list: emanzaki/fortstak
+  argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+  argocd-image-updater.argoproj.io/git-branch: main
+  argocd-image-updater.argoproj.io/emanzaki.fortstak.pull-secret: pullsecret:argocd/dockerhub-creds
+  argocd-image-updater.argoproj.io/emanzaki.fortstak.registry: https://index.docker.io/v1/
 spec:
   project: default
   source:
