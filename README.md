@@ -110,24 +110,30 @@ Prerequisites: AWS CLI, Terraform, Ansible, Docker.
 ![Terraform Output](./images/1-terraform.png)
 
 3- **Configure Ansible**:
-    - Update the [ansible.cfg](./Ansible/ansible.cfg) file with your configuration.
 
-    - add your secrets for docker and git credentials in the `vars` folder:
-    ```
+Update the [ansible.cfg](./Ansible/ansible.cfg) file with your configuration.
+
+Add your secrets for docker and git credentials in the `vars` folder:
+
+```bash
     cd Ansible
     ansible-vault create vars/docker_creds.yml
     ansible-vault create vars/git_creds.yml
-    ```
+```
 4- **Run Ansible Playbook**:
+
    ```bash
    ansible-playbook server.yml --ask-vault-pass
    ```
 ![Ansible Output](./images/2-ansible-server.png)
 
-    ```bash
+
+```bash
     ansible-playbook app.yml --ask-vault-pass
-    ```
+```
+
 ![Ansible App Output](./images/2-ansible-app.png)
+
 
 5- **Access the Application**:
    - Open your browser and navigate to `http://<EC2_PUBLIC_IP>/` to access the Todo List application.
@@ -138,3 +144,37 @@ copy the public IP of your EC2 instance and paste it in your browser to access t
 
 ![Application Screenshot](./images/3-app.png)
 
+6- **Trigger GitHub Actions**:
+   - Push changes to the Todo app directory to trigger the CI/CD pipeline.
+
+![GitHub Actions Output](./images/4-ci-trigger.png)
+
+wait for the GitHub Actions to complete the build and push the Docker image to Docker Hub.
+![GitHub Actions Output](./images/4-ci.png)
+
+Check the Docker Hub repository to verify the image is pushed successfully.
+
+![Docker Hub Repository](./images/4-dockerhub.png)
+
+8- **Verify Argo CD Deployment**:
+   - Change to the `k8s` directory and push the changes to your Git repository.
+
+for example change the number of
+replicas in the `application.yml` file:
+
+```yaml
+spec:
+  replicas: 2
+```
+
+![replicas](./images/5-cd.png)
+
+9- **Image Updater Configuration**:
+   - Configure the Argo CD Image Updater to automatically update the application image when a new version is available.
+   - Update the `kustomization.yaml` file to include the image updater annotations:
+
+```yaml
+images:
+  - name: <your-image-name>
+    newTag: <your-new-tag>
+```
