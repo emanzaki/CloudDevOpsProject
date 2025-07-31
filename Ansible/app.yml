@@ -1,8 +1,36 @@
 ---
 - name: Deploy ArgoCD on Minikube
   hosts: all
-  become: true   
+  become: true
+  vars_files:
+    - ./vars/docker_creds.yml
+    - ./vars/git_creds.yml   
   tasks:
+    - name: Give Image Updater Access to Docker Registry Secret
+      become: no
+      command:
+        cmd: >
+          minikube kubectl -- create secret docker-registry docker-registry-secret
+          --docker-server={{ docker_registry_url }}
+          --docker-username={{ docker_username }}
+          --docker-password={{ docker_password }}
+          --docker-email={{ docker_email }}
+          -n argocd
+    
+    - name: Create Git Credentials Secret
+      become: no
+      command:
+        cmd: >
+          minikube kubectl -- create secret generic git-creds
+          --from-literal=username={{ git_username }}
+          --from-literal=password={{ git_password }}
+          -n argocd
+
+    - name: Argo CD Image Updater
+      become: no
+      command: minikube kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/master/manifests/install.yaml
+      when: app_file.stat.exists
+
     - name: Ensure ArgoCD directory exists
       ansible.builtin.file:
         path: "/home/ec2-user/argocd"
