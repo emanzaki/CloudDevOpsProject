@@ -1,26 +1,24 @@
-
 - name: Install Apache
   yum:
     name: httpd
     state: present
     update_cache: true
 
-- name: Configure Reverse Proxy
-  copy:
-    dest: /etc/httpd/conf.d/reverse-proxy.conf
-    content: |
-      <VirtualHost *:80>
-        ServerAdmin webmaster@localhost
+- name: Get minikube IP
+  command: minikube ip
+  become: false
+  register: minikube_ip
 
-        ProxyPreserveHost On
-        ProxyPass / http://localhost:30080/
-        ProxyPassReverse / http://localhost:30080/
+- name: Set minikube IP fact
+  set_fact:
+    minikube_ip_value: "{{ minikube_ip.stdout }}"
 
-        ErrorLog /var/log/httpd/error.log
-        CustomLog /var/log/httpd/access.log combined
-      </VirtualHost>
+- name: Configure Apache reverse proxy with Minikube IP
+  template:
+    src: templates/minikube-proxy.j2
+    dest: /etc/httpd/conf.d/minikube-proxy.conf
 
-- name: Enable and start Apache
+- name: Restart and enable Apache
   service:
     name: httpd
     state: restarted

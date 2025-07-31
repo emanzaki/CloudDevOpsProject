@@ -1,0 +1,10 @@
+<VirtualHost *:80>
+    ServerName minikube.local
+
+    ProxyPreserveHost On
+    ProxyPass / http://{{ minikube_ip_value }}:30080/
+    ProxyPassReverse / http://{{ minikube_ip_value }}:30080/
+
+    ErrorLog /var/log/httpd/minikube-error.log
+    CustomLog /var/log/httpd/minikube-access.log combined
+</VirtualHost>
