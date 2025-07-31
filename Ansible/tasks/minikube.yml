@@ -25,11 +25,17 @@
   changed_when: false
 
 - name: Start Minikube with Docker driver if not running
-  command: minikube start --driver=docker
+  shell: |
+    newgrp docker <<EONG
+    minikube start --driver=docker
+    EONG
   environment:
     CHANGE_MINIKUBE_NONE_USER: "true"
   become: no
   register: minikube_start
   ignore_errors: yes
   when: minikube_status.rc != 0
+  until: minikube_start.rc == 0
+  retries: 6         
+  delay: 10
 

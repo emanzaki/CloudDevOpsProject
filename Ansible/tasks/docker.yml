@@ -13,24 +13,11 @@
       - lvm2
     state: present
 
-- name: Add Docker repository
-  command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  when: ansible_distribution_major_version == "2"
 
-- name: Install Docker
-  package:
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-    state: present
-  when: ansible_distribution_major_version == "2"
-
-- name: Install Docker for Amazon Linux 2023
+- name: Install Docker 
   package:
     name: docker
     state: present
-  when: ansible_distribution_major_version == "2023"
 
 - name: Start and enable Docker service
   service:
@@ -43,3 +30,12 @@
     name: ec2-user
     groups: docker
     append: yes
+
+- name: Check if ec2-user is in docker group
+  command: id ec2-user
+  register: user_groups
+
+- name: Debug groups
+  debug:
+    var: user_groups.stdout
+
