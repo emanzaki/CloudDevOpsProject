@@ -20,4 +20,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/fortstak
+          tags: ${{ secrets.DOCKER_USERNAME }}/fortstak:${{ github.run_number }}
