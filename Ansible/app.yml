@@ -26,11 +26,6 @@
           --from-literal=password={{ git_password }}
           -n argocd
 
-    - name: Argo CD Image Updater
-      become: no
-      command: minikube kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/master/manifests/install.yaml
-      when: app_file.stat.exists
-
     - name: Ensure ArgoCD directory exists
       ansible.builtin.file:
         path: "/home/ec2-user/argocd"
@@ -49,6 +44,11 @@
     - name: Create ArgoCD Application
       become: no
       command: minikube kubectl -- apply -f /home/ec2-user/argocd/application.yml
+      when: app_file.stat.exists
+
+    - name: Argo CD Image Updater
+      become: no
+      command: minikube kubectl -- apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/master/manifests/install.yaml
       when: app_file.stat.exists
 
     - name: Include Apache reverse proxy setup
