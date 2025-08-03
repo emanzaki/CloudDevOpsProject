@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - emanzaki/fortstak:7
