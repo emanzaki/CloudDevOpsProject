@@ -2,9 +2,6 @@
 - name: Deploy ArgoCD on Minikube
   hosts: all
   become: true
-  vars_files:
-    - ./vars/docker_creds.yml
-    - ./vars/git_creds.yml   
   tasks:
     - name: Ensure ArgoCD directory exists
       ansible.builtin.file:

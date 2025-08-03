@@ -20,7 +20,7 @@
   command:
     cmd: >
       minikube kubectl -- create secret docker-registry dockerhub-creds
-      --docker-server={{ docker_registry_url }}
+      --docker-server={{ docker_registry_url_argocd }}
       --docker-username={{ docker_username }}
       --docker-password={{ docker_password }}
       --docker-email={{ docker_email }}
