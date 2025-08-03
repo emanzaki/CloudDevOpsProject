@@ -7,7 +7,7 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: emanzaki/fortstak
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
     argocd-image-updater.argoproj.io/git-branch: main
-    argocd-image-updater.argoproj.io/emanzaki.fortstak.pull-secret: pull-secret:argocd/dockerhub-creds
+    argocd-image-updater.argoproj.io/emanzaki.fortstak.pull-secret: pullsecret:argocd/dockerhub-creds
     argocd-image-updater.argoproj.io/emanzaki.fortstak.registry: https://registry-1.docker.io
 spec:
   project: default
