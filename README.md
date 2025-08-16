@@ -1,4 +1,4 @@
-# FortStak Internship Assessment  - – Todo List Node.js App
+# GitOps Kubernetes Deployment with Argo CD 
 
 This repository contains the completed DevOps assessment tasks based on a Node.js Todo List application. The tasks are divided into multiple parts covering containerization, CI/CD, infrastructure automation, configuration management, and Kubernetes deployment.
 
@@ -98,8 +98,8 @@ Prerequisites: AWS CLI, Terraform, Ansible, Docker.
 
 1- **Clone the Repository**:
    ```bash
-   git clone https://github.com/emanzaki/FortStak.git
-   cd FortStak
+   git clone https://github.com/emanzaki/CloudDevOpsProject.git
+   cd CloudDevOpsProject
    ```
 2- **Provision Infrastructure**:
    ```bash
